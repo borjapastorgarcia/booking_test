@@ -1,0 +1,43 @@
+version: '3.7'
+
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: test-stayforlong-mysql
+    working_dir: /application
+    volumes:
+      - .:/application
+    environment:
+      - MYSQL_ROOT_PASSWORD=test
+      - MYSQL_DATABASE=stayforlong
+      - MYSQL_PASSWORD=test
+    ports:
+      - "8082:3306"
+  nginx:
+    image: nginx:1.17-alpine
+    container_name: stayforlong-php-dev-nginx
+    environment:
+      - APP_ENV=dev
+    volumes:
+      - ./:/var/www/html:cached
+      - ./build/nginx.conf:/etc/nginx/conf.d/default.conf:cached
+    networks:
+      - test-php-dev
+    ports:
+      - 32777:80
+  php:
+    build:
+      dockerfile: Dockerfile
+      context: build/php
+    container_name: stayforlong-php-container
+    environment:
+      - LOCAL_USER_ID=${HOST_UID}
+      - APP_ENV=dev
+    volumes:
+      - ./:/var/www/html:cached
+    networks:
+      - test-php-dev
+
+networks:
+  test-php-dev:
+    name: test-php-dev

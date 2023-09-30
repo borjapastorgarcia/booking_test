@@ -1,0 +1,3 @@
+health-check_get:
+  path: /health-check
+  controller: App\Back\Controller\HealthCheck\HealthCheckGetController

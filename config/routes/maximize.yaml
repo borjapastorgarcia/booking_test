@@ -1,0 +1,4 @@
+maximize_post:
+  path: /maximize
+  controller: App\Back\BookingRequest\Controller\BookingRequestMaximizeController
+  methods: [ POST ]
