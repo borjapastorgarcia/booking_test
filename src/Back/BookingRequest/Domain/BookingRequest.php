@@ -2,21 +2,12 @@
 
 declare(strict_types=1);
 
-
 namespace App\Back\BookingRequest\Domain;
 
 use JsonException;
 
 final class BookingRequest
 {
-    private const REQUIRED_JSON_FIELDS = [
-        'request_id',
-        'check_in',
-        'nights',
-        'selling_rate',
-        'margin',
-    ];
-
     public function __construct(
         private readonly BookingRequestId $id,
         private readonly BookingRequestCheckIn $checkIn,
@@ -44,10 +35,6 @@ final class BookingRequest
         );
     }
 
-    /**
-     * @throws ValidationErrorResponse
-     * @throws JsonException
-     */
     public static function fromJson(string $bookingRequests): BookingRequestList
     {
         $bookingRequestsArray = json_decode($bookingRequests, true, 512, JSON_THROW_ON_ERROR);
@@ -55,11 +42,11 @@ final class BookingRequest
         foreach ($bookingRequestsArray as $bookingRequestArray) {
             self::checkBookingRequestFieldsConsistency($bookingRequestArray);
             $bookingRequests[] = BookingRequest::create(
-                $bookingRequestArray['request_id'],
-                $bookingRequestArray['check_in'],
-                $bookingRequestArray['nights'],
-                $bookingRequestArray['selling_rate'],
-                $bookingRequestArray['margin'],
+                $bookingRequestArray[BookingRequestContract::REQUEST_ID],
+                $bookingRequestArray[BookingRequestContract::CHECK_IN],
+                $bookingRequestArray[BookingRequestContract::NIGHTS],
+                $bookingRequestArray[BookingRequestContract::SELLING_RATE],
+                $bookingRequestArray[BookingRequestContract::MARGIN],
             );
         }
         return new BookingRequestList($bookingRequests);
@@ -73,7 +60,7 @@ final class BookingRequest
         $missingFields = [];
         $bookingRequestArrayKeys = array_keys($bookingRequest);
 
-        foreach (self::REQUIRED_JSON_FIELDS as $requiredField) {
+        foreach (BookingRequestContract::REQUIRED_JSON_FIELDS as $requiredField) {
             if (!in_array($requiredField, $bookingRequestArrayKeys, true)) {
                 $missingFields[] = $requiredField;
             }
@@ -81,6 +68,17 @@ final class BookingRequest
         if (!empty($missingFields)) {
             throw ValidationErrorResponse::becauseRequiredFieldsAreMissing($missingFields);
         }
+    }
+
+    public function toArray(): array
+    {
+        return [
+            BookingRequestContract::REQUEST_ID   => $this->id(),
+            BookingRequestContract::CHECK_IN     => $this->checkIn(),
+            BookingRequestContract::NIGHTS       => $this->nights(),
+            BookingRequestContract::SELLING_RATE => $this->sellingRate(),
+            BookingRequestContract::MARGIN       => $this->margin(),
+        ];
     }
 
     public function nights(): int
@@ -98,4 +96,13 @@ final class BookingRequest
         return $this->margin->value();
     }
 
+    public function id(): string
+    {
+        return $this->id->value();
+    }
+
+    public function checkIn(): string
+    {
+        return $this->checkIn->value();
+    }
 }

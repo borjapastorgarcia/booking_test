@@ -15,8 +15,4 @@ final class BookingRequestList
     {
         return new ArrayCollection($this->bookingRequest);
     }
-
-
-
-
 }

@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-
 namespace App\Back\BookingRequest\Domain;
-
 
 use App\Back\Shared\Domain\Bus\Query\Response;
 
@@ -23,9 +21,9 @@ final class StatsResponse implements Response
         $profitPerNight = self::getUnitBookValues($bookingRequestList);
 
         return [
-            "avg_night" => floatval(number_format(self::generateAverageProfit($profitPerNight, $bookingRequestList),2)),
-            "min_night" => min($profitPerNight),
-            "max_night" => max($profitPerNight)
+            StatsResponseContract::AVG_NIGHT => floatval(number_format(self::generateAverageProfit($profitPerNight, $bookingRequestList), 2)),
+            StatsResponseContract::MIN_NIGHT => floatval(number_format(min($profitPerNight), 2)),
+            StatsResponseContract::MAX_NIGHT => floatval(number_format(max($profitPerNight), 2))
         ];
     }
 
@@ -45,6 +43,15 @@ final class StatsResponse implements Response
             }) / count($bookingRequestList->bookingRequests());
     }
 
+    public function toArray()
+    {
+        return [
+            StatsResponseContract::AVG_NIGHT => $this->avgNight(),
+            StatsResponseContract::MIN_NIGHT => $this->minNight(),
+            StatsResponseContract::MAX_NIGHT => $this->maxNight()
+        ];
+    }
+
     public function avgNight(): float
     {
         return $this->avgNight;
@@ -59,5 +66,4 @@ final class StatsResponse implements Response
     {
         return $this->maxNight;
     }
-
 }

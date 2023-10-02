@@ -19,7 +19,8 @@ final class BookingRequestStatsController extends AbstractController
 {
     public function __construct(
         private readonly GenerateStatsResponder $responder,
-        private readonly QueryBus $queryBus)
+        private readonly QueryBus $queryBus
+    )
     {
     }
 
@@ -33,7 +34,6 @@ final class BookingRequestStatsController extends AbstractController
                 )
             );
             $this->responder->loadStats($stats);
-
         } catch (Exception $exception) {
             $this->responder->loadError($exception->getMessage());
         }

@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-
 namespace App\Back\BookingRequest\Infrastructure\Http;
-
 
 use App\Back\BookingRequest\Domain\StatsResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -25,11 +23,7 @@ final class GenerateStatsResponder
     public function loadStats(StatsResponse $stats): void
     {
         $this->response = new JsonResponse(
-            [
-                'avg_night' => $stats->avgNight(),
-                'min_night' => $stats->minNight(),
-                'max_night' => $stats->maxNight()
-            ],
+            $stats->toArray(),
             Response::HTTP_OK,
         );
     }
@@ -42,7 +36,6 @@ final class GenerateStatsResponder
                 Response::HTTP_BAD_REQUEST,
             );
         }
-
         return $this->response;
     }
 }
