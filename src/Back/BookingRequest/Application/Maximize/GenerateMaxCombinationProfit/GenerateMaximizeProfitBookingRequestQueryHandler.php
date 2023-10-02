@@ -19,10 +19,9 @@ final class GenerateMaximizeProfitBookingRequestQueryHandler implements QueryHan
     public function __construct() { }
 
     /**
-     * @throws ValidationErrorResponse
      * @throws JsonException
      */
-    public function __invoke(GenerateMaximizeProfitBookingRequestQuery $query)
+    public function __invoke(GenerateMaximizeProfitBookingRequestQuery $query): MaximizeResponse
     {
         $validatedData = BookingRequest::fromJson($query->bookingStatsData());
 

@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-
 namespace App\Back\BookingRequest\Domain;
-
 
 final class BookingRequestNumberOfNights
 {
@@ -14,5 +12,4 @@ final class BookingRequestNumberOfNights
     {
         return $this->value;
     }
-
 }

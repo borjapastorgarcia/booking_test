@@ -2,9 +2,7 @@
 
 declare(strict_types=1);
 
-
 namespace App\Back\BookingRequest\Domain;
-
 
 final class BookingRequestSellingRate
 {
@@ -14,5 +12,4 @@ final class BookingRequestSellingRate
     {
         return $this->value;
     }
-
 }

@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Back\BookingRequest\Domain;
 
-use JsonException;
-
 final class BookingRequest
 {
     public function __construct(
@@ -49,17 +47,16 @@ final class BookingRequest
                 $bookingRequestArray[BookingRequestContract::MARGIN],
             );
         }
-        return new BookingRequestList($bookingRequests);
+        return BookingRequestList::create($bookingRequests);
     }
 
     /**
      * @throws ValidationErrorResponse
      */
-    private static function checkBookingRequestFieldsConsistency(array $bookingRequest): void
+    public static function checkBookingRequestFieldsConsistency(array $bookingRequest): void
     {
         $missingFields = [];
         $bookingRequestArrayKeys = array_keys($bookingRequest);
-
         foreach (BookingRequestContract::REQUIRED_JSON_FIELDS as $requiredField) {
             if (!in_array($requiredField, $bookingRequestArrayKeys, true)) {
                 $missingFields[] = $requiredField;
@@ -73,12 +70,17 @@ final class BookingRequest
     public function toArray(): array
     {
         return [
-            BookingRequestContract::REQUEST_ID   => $this->id(),
-            BookingRequestContract::CHECK_IN     => $this->checkIn(),
-            BookingRequestContract::NIGHTS       => $this->nights(),
+            BookingRequestContract::REQUEST_ID => $this->id(),
+            BookingRequestContract::CHECK_IN => $this->checkIn(),
+            BookingRequestContract::NIGHTS => $this->nights(),
             BookingRequestContract::SELLING_RATE => $this->sellingRate(),
-            BookingRequestContract::MARGIN       => $this->margin(),
+            BookingRequestContract::MARGIN => $this->margin(),
         ];
+    }
+
+    public function profitPerNight(): float
+    {
+        return $this->sellingRate() * ($this->margin() / 100) / $this->nights();
     }
 
     public function nights(): int

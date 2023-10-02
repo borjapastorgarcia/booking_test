@@ -22,9 +22,9 @@ final class MaximizeResponse implements Response
     {
         $validBookingRequestCombinations = self::findCombinationGreatestProfit(self::removeOverlappedCombinations($bookingRequestList));
         return [
-            MaximizeResponseContract::REQUEST_IDS => array_column($validBookingRequestCombinations, BookingRequestContract::REQUEST_ID),
-            MaximizeResponseContract::TOTAL_PROFIT => $validBookingRequestCombinations[BookingRequestContract::PROFIT],
-            MaximizeResponseContract::STATS_DATA => $validBookingRequestCombinations
+            MaximizeResponseContract::REQUEST_IDS   => array_column($validBookingRequestCombinations, BookingRequestContract::REQUEST_ID),
+            MaximizeResponseContract::TOTAL_PROFIT  => $validBookingRequestCombinations[BookingRequestContract::PROFIT],
+            MaximizeResponseContract::STATS_DATA    => $validBookingRequestCombinations
         ];
     }
 
@@ -55,10 +55,11 @@ final class MaximizeResponse implements Response
             }
             $validCombinations = array_merge($validCombinations, $newCombinations);
         }
-        return $validCombinations;
+
+        return array_filter(array_map('array_filter', $validCombinations));
     }
 
-    private static function checkConflictExistingCombination(array $newCombination): bool
+    public static function checkConflictExistingCombination(array $newCombination): bool
     {
         $hasConflict = false;
         foreach ($newCombination as $firstBooking) {
@@ -76,8 +77,6 @@ final class MaximizeResponse implements Response
     {
         $bestCombination = [];
         $bestProfit = 0;
-        $combinations = array_map('array_filter', $combinations);
-        $combinations = array_filter($combinations);
         foreach ($combinations as $combination) {
             $combinationWithProfits = self::addTotalProfit($combination);
             if ($combinationWithProfits[BookingRequestContract::PROFIT] > $bestProfit) {
@@ -93,11 +92,27 @@ final class MaximizeResponse implements Response
         $totalProfit = 0;
         if (!empty($combination)) {
             foreach ($combination as $booking) {
-                $totalProfit += ($booking[BookingRequestContract::SELLING_RATE] * $booking[BookingRequestContract::MARGIN]) / 100;
+                $totalProfit += self::calculateProfit($booking[BookingRequestContract::SELLING_RATE], $booking[BookingRequestContract::MARGIN]);
             }
             $combination[BookingRequestContract::PROFIT] = isset($combination[BookingRequestContract::PROFIT]) ? $combination[BookingRequestContract::PROFIT] + $totalProfit : $totalProfit;
         }
         return $combination;
+    }
+
+    public function toArray():array
+    {
+        return [
+            MaximizeResponseContract::REQUEST_IDS   => $this->requestIds(),
+            MaximizeResponseContract::TOTAL_PROFIT  => $this->totalProfit(),
+            StatsResponseContract::AVG_NIGHT        => $this->avgNight(),
+            StatsResponseContract::MIN_NIGHT        => $this->minNight(),
+            StatsResponseContract::MAX_NIGHT        => $this->maxNight()
+        ];
+    }
+
+    private static function calculateProfit(float $sellingRate, float $margin): float
+    {
+        return ($sellingRate * $margin) / 100;
     }
 
     public function requestIds(): array

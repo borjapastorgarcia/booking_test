@@ -5,6 +5,35 @@ Content-Type: application/json
 
 [
   {
+    "request_id": "A",
+    "check_in": "2018-01-01",
+    "nights": 10,
+    "selling_rate": 1000,
+    "margin": 10
+  },
+  {
+    "request_id": "B",
+    "check_in": "2018-01-06",
+    "nights": 10,
+    "selling_rate": 700,
+    "margin": 10
+  },
+  {
+    "request_id": "C",
+    "check_in": "2018-01-12",
+    "nights": 10,
+    "selling_rate": 400,
+    "margin": 10
+  }
+]
+
+###
+
+POST http://127.0.0.1:8000/maximize
+Content-Type: application/json
+
+[
+  {
     "request_id": "bookata_XY123",
     "check_in": "2020-01-01",
     "nights": 5,
