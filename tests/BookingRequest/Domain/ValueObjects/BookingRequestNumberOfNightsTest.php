@@ -6,7 +6,7 @@ declare(strict_types=1);
 namespace App\Tests\BookingRequest\Domain\ValueObjects;
 
 
-use App\Back\BookingRequest\Domain\BookingRequestNumberOfNights;
+use App\Back\BookingRequest\Domain\ValueObjects\BookingRequestNumberOfNights;
 use PHPUnit\Framework\TestCase;
 
 final class BookingRequestNumberOfNightsTest extends TestCase

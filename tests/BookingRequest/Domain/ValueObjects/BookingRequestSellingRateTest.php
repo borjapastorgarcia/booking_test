@@ -6,7 +6,7 @@ declare(strict_types=1);
 namespace App\Tests\BookingRequest\Domain\ValueObjects;
 
 
-use App\Back\BookingRequest\Domain\BookingRequestSellingRate;
+use App\Back\BookingRequest\Domain\ValueObjects\BookingRequestSellingRate;
 use PHPUnit\Framework\TestCase;
 
 final class BookingRequestSellingRateTest extends TestCase
