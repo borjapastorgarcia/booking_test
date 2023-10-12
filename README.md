@@ -109,6 +109,11 @@ To launch the tests, we have the following command
 make test
 ```
 
+To launch the acceptance tests in behat, we have the following command
+```bash
+make test-acceptance
+```
+
 ## Possible improvements
 
 Adding domain events (e.g. when arrives a booking request)
