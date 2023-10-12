@@ -1,6 +1,6 @@
 # Given a list of booking requests,
 # return the best combination of requests that maximizes total profits
-POST http://127.0.0.1:8000/maximize
+POST http://127.0.0.1:32777/maximize
 Content-Type: application/json
 
 [
@@ -29,7 +29,7 @@ Content-Type: application/json
 
 ###
 
-POST http://127.0.0.1:8000/maximize
+POST http://127.0.0.1:32777/maximize
 Content-Type: application/json
 
 [
