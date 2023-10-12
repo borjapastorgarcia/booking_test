@@ -11,33 +11,41 @@ final class MaximizeResponse implements Response
     public function __construct(
         private readonly array $requestIds,
         private readonly float $totalProfit,
-        private readonly float $avgNight,
-        private readonly float $minNight,
-        private readonly float $maxNight
+        private readonly ?StatsResponse $statsData
     )
     {
     }
 
-    public static function generateMaximizeProfitResponse(BookingRequestList $bookingRequestList): array
+    public static function create(
+        array          $requestIds,
+        float          $totalProfit,
+        ?StatsResponse $statsData = null
+    ): self
+    {
+        return new self(
+            $requestIds,
+            $totalProfit,
+            $statsData
+        );
+    }
+
+    public static function generateMaximizeProfitResponse(BookingRequestList $bookingRequestList): self
     {
         $validBookingRequestCombinations = self::findCombinationGreatestProfit(self::removeOverlappedCombinations($bookingRequestList));
-        return [
-            MaximizeResponseContract::REQUEST_IDS   => array_column($validBookingRequestCombinations, BookingRequestContract::REQUEST_ID),
-            MaximizeResponseContract::TOTAL_PROFIT  => $validBookingRequestCombinations[BookingRequestContract::PROFIT],
-            MaximizeResponseContract::STATS_DATA    => $validBookingRequestCombinations
-        ];
+        $cleanedBookingsCombinations = self::cleanResponse([
+            MaximizeResponseContract::REQUEST_IDS => array_column($validBookingRequestCombinations, BookingRequestContract::REQUEST_ID),
+            MaximizeResponseContract::TOTAL_PROFIT => $validBookingRequestCombinations[BookingRequestContract::PROFIT],
+            MaximizeResponseContract::STATS_DATA => $validBookingRequestCombinations
+        ]);
+
+        return self::create(
+            $cleanedBookingsCombinations[MaximizeResponseContract::REQUEST_IDS],
+            $cleanedBookingsCombinations[MaximizeResponseContract::TOTAL_PROFIT],
+            StatsResponse::generateStats(
+                BookingRequestList::fromJson(json_encode($cleanedBookingsCombinations[MaximizeResponseContract::STATS_DATA]))
+            ));
     }
 
-    public static function hasConflict(array $booking1, array $booking2): bool
-    {
-        $checkIn1 = strtotime($booking1[BookingRequestContract::CHECK_IN]);
-        $checkOut1 = strtotime("+" . $booking1[BookingRequestContract::NIGHTS] . " days", $checkIn1);
-
-        $checkIn2 = strtotime($booking2[BookingRequestContract::CHECK_IN]);
-        $checkOut2 = strtotime("+" . $booking2[BookingRequestContract::NIGHTS] . " days", $checkIn2);
-
-        return ($checkIn1 < $checkOut2 && $checkOut1 > $checkIn2);
-    }
 
     public static function removeOverlappedCombinations(BookingRequestList $bookingRequestList): array
     {
@@ -47,9 +55,8 @@ final class MaximizeResponse implements Response
             foreach ($validCombinations as $combination) {
                 $newCombination = $combination;
                 $newCombination[] = $bookingRequest->toArray();
-                $hasConflict = self::checkConflictExistingCombination($newCombination);
 
-                if (!$hasConflict) {
+                if (!self::hasCombinationConflict($newCombination)) {
                     $newCombinations[] = $newCombination;
                 }
             }
@@ -59,12 +66,12 @@ final class MaximizeResponse implements Response
         return array_filter(array_map('array_filter', $validCombinations));
     }
 
-    public static function checkConflictExistingCombination(array $newCombination): bool
+    public static function hasCombinationConflict(array $newCombination): bool
     {
         $hasConflict = false;
         foreach ($newCombination as $firstBooking) {
             foreach ($newCombination as $secondBooking) {
-                if ($firstBooking[BookingRequestContract::REQUEST_ID] !== $secondBooking[BookingRequestContract::REQUEST_ID] && self::hasConflict($firstBooking, $secondBooking)) {
+                if ($firstBooking[BookingRequestContract::REQUEST_ID] !== $secondBooking[BookingRequestContract::REQUEST_ID] && BookingRequest::hasConflictiveDates($firstBooking, $secondBooking)) {
                     $hasConflict = true;
                     break 2;
                 }
@@ -92,27 +99,30 @@ final class MaximizeResponse implements Response
         $totalProfit = 0;
         if (!empty($combination)) {
             foreach ($combination as $booking) {
-                $totalProfit += self::calculateProfit($booking[BookingRequestContract::SELLING_RATE], $booking[BookingRequestContract::MARGIN]);
+                $totalProfit += BookingRequest::calculateProfit($booking[BookingRequestContract::SELLING_RATE], $booking[BookingRequestContract::MARGIN]);
             }
             $combination[BookingRequestContract::PROFIT] = isset($combination[BookingRequestContract::PROFIT]) ? $combination[BookingRequestContract::PROFIT] + $totalProfit : $totalProfit;
         }
         return $combination;
     }
 
-    public function toArray():array
+    public function toArray(): array
     {
         return [
-            MaximizeResponseContract::REQUEST_IDS   => $this->requestIds(),
-            MaximizeResponseContract::TOTAL_PROFIT  => $this->totalProfit(),
-            StatsResponseContract::AVG_NIGHT        => $this->avgNight(),
-            StatsResponseContract::MIN_NIGHT        => $this->minNight(),
-            StatsResponseContract::MAX_NIGHT        => $this->maxNight()
+            MaximizeResponseContract::REQUEST_IDS => $this->requestIds(),
+            MaximizeResponseContract::TOTAL_PROFIT => $this->totalProfit(),
+            StatsResponseContract::AVG_NIGHT => $this->avgNight(),
+            StatsResponseContract::MIN_NIGHT => $this->minNight(),
+            StatsResponseContract::MAX_NIGHT => $this->maxNight()
         ];
     }
 
-    private static function calculateProfit(float $sellingRate, float $margin): float
+    private static function cleanResponse(array $maximizeResponse): array
     {
-        return ($sellingRate * $margin) / 100;
+        if (isset($maximizeResponse[MaximizeResponseContract::STATS_DATA][BookingRequestContract::PROFIT])) {
+            unset($maximizeResponse[MaximizeResponseContract::STATS_DATA][BookingRequestContract::PROFIT]);
+        }
+        return $maximizeResponse;
     }
 
     public function requestIds(): array
@@ -127,16 +137,17 @@ final class MaximizeResponse implements Response
 
     public function avgNight(): float
     {
-        return $this->avgNight;
+        return $this->statsData->avgNight();
     }
 
     public function minNight(): float
     {
-        return $this->minNight;
+        return $this->statsData->minNight();
     }
 
     public function maxNight(): float
     {
-        return $this->maxNight;
+        return $this->statsData->maxNight();
     }
+
 }

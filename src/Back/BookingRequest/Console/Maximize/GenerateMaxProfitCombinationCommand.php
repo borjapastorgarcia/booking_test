@@ -38,12 +38,11 @@ final class GenerateMaxProfitCombinationCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $request = $input->getArgument('request');
         try {
             /** @var MaximizeResponse $bestCombinationResponse */
             $bestCombinationResponse = $this->queryBus->ask(
                 new GenerateMaximizeProfitBookingRequestQuery(
-                    $request
+                    $input->getArgument('request')
                 )
             );
             $this->responder->loadBestCombination($bestCombinationResponse);

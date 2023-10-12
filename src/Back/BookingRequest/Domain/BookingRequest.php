@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace App\Back\BookingRequest\Domain;
 
+use JetBrains\PhpStorm\ArrayShape;
+
 final class BookingRequest
 {
-    public function __construct(
+    private function __construct(
         private readonly BookingRequestId $id,
         private readonly BookingRequestCheckIn $checkIn,
         private readonly BookingRequestNumberOfNights $nights,
@@ -33,23 +35,6 @@ final class BookingRequest
         );
     }
 
-    public static function fromJson(string $bookingRequests): BookingRequestList
-    {
-        $bookingRequestsArray = json_decode($bookingRequests, true, 512, JSON_THROW_ON_ERROR);
-        $bookingRequests = [];
-        foreach ($bookingRequestsArray as $bookingRequestArray) {
-            self::checkBookingRequestFieldsConsistency($bookingRequestArray);
-            $bookingRequests[] = BookingRequest::create(
-                $bookingRequestArray[BookingRequestContract::REQUEST_ID],
-                $bookingRequestArray[BookingRequestContract::CHECK_IN],
-                $bookingRequestArray[BookingRequestContract::NIGHTS],
-                $bookingRequestArray[BookingRequestContract::SELLING_RATE],
-                $bookingRequestArray[BookingRequestContract::MARGIN],
-            );
-        }
-        return BookingRequestList::create($bookingRequests);
-    }
-
     /**
      * @throws ValidationErrorResponse
      */
@@ -67,6 +52,8 @@ final class BookingRequest
         }
     }
 
+
+    #[ArrayShape([BookingRequestContract::REQUEST_ID => "string", BookingRequestContract::CHECK_IN => "string", BookingRequestContract::NIGHTS => "int", BookingRequestContract::SELLING_RATE => "int", BookingRequestContract::MARGIN => "int"])]
     public function toArray(): array
     {
         return [
@@ -76,6 +63,22 @@ final class BookingRequest
             BookingRequestContract::SELLING_RATE => $this->sellingRate(),
             BookingRequestContract::MARGIN => $this->margin(),
         ];
+    }
+
+    public static function hasConflictiveDates(array $booking, array $bookingToCompare): bool
+    {
+        $checkIn = strtotime($booking[BookingRequestContract::CHECK_IN]);
+        $checkOut = strtotime("+" . $booking[BookingRequestContract::NIGHTS] . " days", $checkIn);
+
+        $checkInToCompare = strtotime($bookingToCompare[BookingRequestContract::CHECK_IN]);
+        $checkOutToCompare = strtotime("+" . $bookingToCompare[BookingRequestContract::NIGHTS] . " days", $checkInToCompare);
+
+        return ($checkIn < $checkOutToCompare && $checkOut > $checkInToCompare);
+    }
+
+    public static function calculateProfit(float $sellingRate, float $margin): float
+    {
+        return ($sellingRate * $margin) / 100;
     }
 
     public function profitPerNight(): float

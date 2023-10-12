@@ -29,7 +29,7 @@ final class MaximizeResponseTest extends TestCase
             ],
         ];
 
-        $result = MaximizeResponse::checkConflictExistingCombination($newCombination);
+        $result = MaximizeResponse::hasCombinationConflict($newCombination);
 
         $this->assertTrue($result);
     }
@@ -51,7 +51,7 @@ final class MaximizeResponseTest extends TestCase
             ],
         ];
 
-        $result = MaximizeResponse::checkConflictExistingCombination($newCombination);
+        $result = MaximizeResponse::hasCombinationConflict($newCombination);
 
         $this->assertFalse($result);
     }
