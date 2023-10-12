@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace App\Back\BookingRequest\Domain;
 
+use App\Back\BookingRequest\Domain\ValueObjects\BookingRequestCheckIn;
+use App\Back\BookingRequest\Domain\ValueObjects\BookingRequestId;
+use App\Back\BookingRequest\Domain\ValueObjects\BookingRequestMargin;
+use App\Back\BookingRequest\Domain\ValueObjects\BookingRequestNumberOfNights;
+use App\Back\BookingRequest\Domain\ValueObjects\BookingRequestSellingRate;
 use JetBrains\PhpStorm\ArrayShape;
 
 final class BookingRequest

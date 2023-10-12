@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Back\BookingRequest\Domain;
+namespace App\Back\BookingRequest\Domain\ValueObjects;
 
 final class BookingRequestId
 {

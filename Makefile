@@ -37,5 +37,8 @@ start-local:
 test:
 	php bin/phpunit
 
+test-acceptance:
+	./vendor/bin/behat
+
 test-behat:
 	vendor/bin/behat -p backend

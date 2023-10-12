@@ -6,12 +6,12 @@ declare(strict_types=1);
 namespace App\Tests\BookingRequest\Domain;
 
 
-use App\Back\BookingRequest\Domain\BookingRequestCheckIn;
-use App\Back\BookingRequest\Domain\BookingRequestId;
-use App\Back\BookingRequest\Domain\BookingRequestMargin;
-use App\Back\BookingRequest\Domain\BookingRequestNumberOfNights;
-use App\Back\BookingRequest\Domain\BookingRequestSellingRate;
 use App\Back\BookingRequest\Domain\BookingRequest;
+use App\Back\BookingRequest\Domain\ValueObjects\BookingRequestCheckIn;
+use App\Back\BookingRequest\Domain\ValueObjects\BookingRequestId;
+use App\Back\BookingRequest\Domain\ValueObjects\BookingRequestMargin;
+use App\Back\BookingRequest\Domain\ValueObjects\BookingRequestNumberOfNights;
+use App\Back\BookingRequest\Domain\ValueObjects\BookingRequestSellingRate;
 use PHPUnit\Framework\TestCase;
 
 final class BookingRequestTest extends TestCase
