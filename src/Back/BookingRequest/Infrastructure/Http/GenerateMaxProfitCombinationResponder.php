@@ -26,11 +26,11 @@ final class GenerateMaxProfitCombinationResponder
     {
         $this->response = new JsonResponse(
             [
-                MaximizeResponseContract::REQUEST_IDS => $bestProfitCombination->requestIds(),
-                MaximizeResponseContract::TOTAL_PROFIT => $bestProfitCombination->totalProfit(),
-                StatsResponseContract::AVG_NIGHT => $bestProfitCombination->avgNight(),
-                StatsResponseContract::MIN_NIGHT => $bestProfitCombination->minNight(),
-                StatsResponseContract::MAX_NIGHT => $bestProfitCombination->maxNight()
+                MaximizeResponseContract::REQUEST_IDS   => $bestProfitCombination->requestIds(),
+                MaximizeResponseContract::TOTAL_PROFIT  => $bestProfitCombination->totalProfit(),
+                StatsResponseContract::AVG_NIGHT        => $bestProfitCombination->avgNight(),
+                StatsResponseContract::MIN_NIGHT        => $bestProfitCombination->minNight(),
+                StatsResponseContract::MAX_NIGHT        => $bestProfitCombination->maxNight()
             ],
             Response::HTTP_OK,
         );

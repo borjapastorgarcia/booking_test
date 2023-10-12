@@ -46,18 +46,10 @@ final class StatsResponseTest extends TestCase
             )
         ]);
         $stats = StatsResponse::generateStats($bookingRequestList);
-        $this->assertArrayHasKey(StatsResponseContract::AVG_NIGHT, $stats);
-        $this->assertArrayHasKey(StatsResponseContract::MIN_NIGHT, $stats);
-        $this->assertArrayHasKey(StatsResponseContract::MAX_NIGHT, $stats);
-        $this->assertSame($stats[StatsResponseContract::AVG_NIGHT], 6.05);
-    }
-
-    /* @test */
-    public function test_avg_profit_calculation()
-    {
-        $averageValue = 8.29;
-        $averageProfit = StatsResponse::generateAverageProfit([8, 8.58], 2);
-        $this->assertSame($averageProfit, $averageValue);
-
+        $statsArray = $stats->toArray();
+        $this->assertArrayHasKey(StatsResponseContract::AVG_NIGHT, $statsArray);
+        $this->assertArrayHasKey(StatsResponseContract::MIN_NIGHT, $statsArray);
+        $this->assertArrayHasKey(StatsResponseContract::MAX_NIGHT, $statsArray);
+        $this->assertSame($statsArray[StatsResponseContract::AVG_NIGHT], 6.05);
     }
 }

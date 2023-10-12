@@ -5,10 +5,8 @@ declare(strict_types=1);
 
 namespace App\Back\BookingRequest\Application\Stats\Generate;
 
-
-use App\Back\BookingRequest\Domain\BookingRequest;
+use App\Back\BookingRequest\Domain\BookingRequestList;
 use App\Back\BookingRequest\Domain\StatsResponse;
-use App\Back\BookingRequest\Domain\StatsResponseContract;
 use App\Back\BookingRequest\Domain\ValidationErrorResponse;
 use App\Back\Shared\Domain\Bus\Query\QueryHandler;
 use JsonException;
@@ -23,14 +21,8 @@ final class GenerateBookingRequestStatsQueryHandler implements QueryHandler
      */
     public function __invoke(GenerateBookingRequestStatsQuery $query): StatsResponse
     {
-        $response = StatsResponse::generateStats(
-            BookingRequest::fromJson($query->statsData())
+        return StatsResponse::generateStats(
+            BookingRequestList::fromJson($query->statsData())
         );
-        return new StatsResponse(
-            $response[StatsResponseContract::AVG_NIGHT],
-            $response[StatsResponseContract::MIN_NIGHT],
-            $response[StatsResponseContract::MAX_NIGHT]
-        );
-
     }
 }

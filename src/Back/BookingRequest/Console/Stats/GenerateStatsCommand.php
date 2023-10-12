@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Back\BookingRequest\Console\Stats;
 
-use App\Back\BookingRequest\Application\Maximize\GenerateMaxCombinationProfit\GenerateMaximizeProfitBookingRequestQuery;
 use App\Back\BookingRequest\Application\Stats\Generate\GenerateBookingRequestStatsQuery;
-use App\Back\BookingRequest\Domain\MaximizeResponse;
 use App\Back\BookingRequest\Domain\StatsResponse;
 use App\Back\BookingRequest\Infrastructure\Http\GenerateStatsResponder;
 use App\Back\Shared\Domain\Bus\Query\QueryBus;
@@ -42,12 +40,11 @@ booking requests in the payload.')
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $request = $input->getArgument('request');
         try {
             /** @var StatsResponse $stats */
             $stats = $this->queryBus->ask(
                 new GenerateBookingRequestStatsQuery(
-                    $request
+                    $input->getArgument('request')
                 )
             );
             $this->responder->loadStats($stats);
