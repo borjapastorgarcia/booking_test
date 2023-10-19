@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace App\Tests\BookingRequest\Domain;
 
+use App\Back\BookingRequest\Application\Stats\StatsResponse;
 use App\Back\BookingRequest\Domain\BookingRequest;
 use App\Back\BookingRequest\Domain\BookingRequestList;
-use App\Back\BookingRequest\Domain\StatsResponse;
 use App\Back\BookingRequest\Domain\StatsResponseContract;
 use PHPUnit\Framework\TestCase;
 
@@ -45,11 +45,11 @@ final class StatsResponseTest extends TestCase
                 30
             )
         ]);
-        $stats = StatsResponse::generateStats($bookingRequestList);
+        $stats = StatsResponse::generate($bookingRequestList);
         $statsArray = $stats->toArray();
-        $this->assertArrayHasKey(StatsResponseContract::AVG_NIGHT, $statsArray);
-        $this->assertArrayHasKey(StatsResponseContract::MIN_NIGHT, $statsArray);
-        $this->assertArrayHasKey(StatsResponseContract::MAX_NIGHT, $statsArray);
-        $this->assertSame($statsArray[StatsResponseContract::AVG_NIGHT], 6.05);
+        $this->assertArrayHasKey(StatsResponseContract::avg_night(), $statsArray);
+        $this->assertArrayHasKey(StatsResponseContract::min_night(), $statsArray);
+        $this->assertArrayHasKey(StatsResponseContract::max_night(), $statsArray);
+        $this->assertSame($statsArray[StatsResponseContract::avg_night()], 6.05);
     }
 }
