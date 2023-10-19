@@ -3,11 +3,11 @@
 declare(strict_types=1);
 
 
-namespace App\Back\BookingRequest\Controller;
+namespace App\Back\BookingRequest\UI\Controller;
 
 
 use App\Back\BookingRequest\Application\Stats\Generate\GenerateBookingRequestStatsQuery;
-use App\Back\BookingRequest\Domain\StatsResponse;
+use App\Back\BookingRequest\Application\Stats\StatsResponse;
 use App\Back\BookingRequest\Infrastructure\Http\GenerateStatsResponder;
 use App\Back\Shared\Domain\Bus\Query\QueryBus;
 use Exception;
@@ -34,9 +34,10 @@ final class BookingRequestStatsController extends AbstractController
                 )
             );
             $this->responder->loadStats($stats);
+            return $this->responder->response();
         } catch (Exception $exception) {
             $this->responder->loadError($exception->getMessage());
+            return $this->responder->response();
         }
-        return $this->responder->response();
     }
 }

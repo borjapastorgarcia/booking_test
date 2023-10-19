@@ -6,8 +6,10 @@ namespace App\Tests\BookingRequest\Application\Stats\Generate;
 
 use App\Back\BookingRequest\Application\Maximize\GenerateMaxCombinationProfit\GenerateMaximizeProfitBookingRequestQuery;
 use App\Back\BookingRequest\Application\Maximize\GenerateMaxCombinationProfit\GenerateMaximizeProfitBookingRequestQueryHandler;
-use App\Back\BookingRequest\Domain\MaximizeResponseContract;
+use App\Back\BookingRequest\Application\ValidationErrorResponse;
+use App\Back\BookingRequest\Domain\MaximizeProfiitResponseContract;
 use App\Back\BookingRequest\Domain\StatsResponseContract;
+use JsonException;
 use PHPUnit\Framework\TestCase;
 
 final class GenerateMaximizeProfitBookingRequestQueryHandlerTest extends TestCase
@@ -15,6 +17,7 @@ final class GenerateMaximizeProfitBookingRequestQueryHandlerTest extends TestCas
     /* @test */
     public function test_maximize_response_is_ok()
     {
+        //TODO build a data provider
         $testData = '[
         {
             "request_id": "A",
@@ -43,15 +46,17 @@ final class GenerateMaximizeProfitBookingRequestQueryHandlerTest extends TestCas
             $response = $this->buildQueryHandler()(new GenerateMaximizeProfitBookingRequestQuery(
                 $testData
             ));
-        } catch (\JsonException $e) {
+        } catch (JsonException|ValidationErrorResponse $e) {
             die($e->getMessage());
         }
 
-        $this->assertArrayHasKey(MaximizeResponseContract::REQUEST_IDS, $response->toArray());
-        $this->assertArrayHasKey(MaximizeResponseContract::TOTAL_PROFIT, $response->toArray());
-        $this->assertArrayHasKey(StatsResponseContract::AVG_NIGHT, $response->toArray());
-        $this->assertArrayHasKey(StatsResponseContract::MIN_NIGHT, $response->toArray());
-        $this->assertArrayHasKey(StatsResponseContract::MAX_NIGHT, $response->toArray());
+        $responseArray = $response->toArray();
+
+        $this->assertArrayHasKey(MaximizeProfiitResponseContract::request_ids(), $responseArray);
+        $this->assertArrayHasKey(MaximizeProfiitResponseContract::total_profit(), $responseArray);
+        $this->assertArrayHasKey(StatsResponseContract::avg_night(), $responseArray);
+        $this->assertArrayHasKey(StatsResponseContract::min_night(), $responseArray);
+        $this->assertArrayHasKey(StatsResponseContract::max_night(), $responseArray);
     }
 
     private function buildQueryHandler(): GenerateMaximizeProfitBookingRequestQueryHandler

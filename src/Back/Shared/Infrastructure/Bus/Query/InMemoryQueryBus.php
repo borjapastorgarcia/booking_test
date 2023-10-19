@@ -3,13 +3,13 @@
 declare(strict_types=1);
 
 
-namespace App\Back\Shared\infrastructure\Bus\Query;
+namespace App\Back\Shared\Infrastructure\Bus\Query;
 
 
 use App\Back\Shared\Domain\Bus\Query\Query;
 use App\Back\Shared\Domain\Bus\Query\QueryBus;
 use App\Back\Shared\Domain\Bus\Query\Response;
-use App\Back\Shared\infrastructure\Bus\HandlerBuilder;
+use App\Back\Shared\Infrastructure\Bus\HandlerBuilder;
 use InvalidArgumentException;
 use Symfony\Component\Messenger\Exception\NoHandlerForMessageException;
 use Symfony\Component\Messenger\Handler\HandlersLocator;

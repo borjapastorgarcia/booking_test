@@ -1,4 +1,4 @@
 stats_post:
   path: /stats
-  controller: App\Back\BookingRequest\Controller\BookingRequestStatsController
+  controller: App\Back\BookingRequest\UI\Controller\BookingRequestStatsController
   methods: [ POST ]

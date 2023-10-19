@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Tests\BookingRequest\Domain\ValueObjects;
 
+use App\Back\BookingRequest\Application\ValidationErrorResponse;
 use App\Back\BookingRequest\Domain\BookingRequestList;
-use App\Back\BookingRequest\Domain\ValidationErrorResponse;
 use PHPUnit\Framework\TestCase;
 
 final class BookingRequestListsTest extends TestCase

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Back\BookingRequest\Infrastructure\Http;
 
-use App\Back\BookingRequest\Domain\StatsResponse;
+use App\Back\BookingRequest\Application\Stats\StatsResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 

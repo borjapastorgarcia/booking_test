@@ -3,12 +3,12 @@
 declare(strict_types=1);
 
 
-namespace App\Back\Shared\infrastructure\Bus\Command;
+namespace App\Back\Shared\Infrastructure\Bus\Command;
 
 
 use App\Back\Shared\Domain\Bus\Command\Command;
 use App\Back\Shared\Domain\Bus\Command\CommandBus;
-use App\Back\Shared\infrastructure\Bus\HandlerBuilder;
+use App\Back\Shared\Infrastructure\Bus\HandlerBuilder;
 use InvalidArgumentException;
 use Symfony\Component\Messenger\Exception\HandlerFailedException;
 use Symfony\Component\Messenger\Exception\NoHandlerForMessageException;

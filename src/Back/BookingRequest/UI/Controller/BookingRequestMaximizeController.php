@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Back\BookingRequest\Controller;
+namespace App\Back\BookingRequest\UI\Controller;
 
 use App\Back\BookingRequest\Application\Maximize\GenerateMaxCombinationProfit\GenerateMaximizeProfitBookingRequestQuery;
-use App\Back\BookingRequest\Domain\MaximizeResponse;
+use App\Back\BookingRequest\Application\Maximize\MaximizeProfitResponse;
 use App\Back\BookingRequest\Infrastructure\Http\GenerateMaxProfitCombinationResponder;
 use App\Back\Shared\Domain\Bus\Query\QueryBus;
 use Exception;
@@ -25,17 +25,17 @@ final class BookingRequestMaximizeController extends AbstractController
     public function __invoke(Request $request): Response
     {
         try {
-            /** @var MaximizeResponse $bestCombinationResponse */
+            /** @var MaximizeProfitResponse $bestCombinationResponse */
             $bestCombinationResponse = $this->queryBus->ask(
                 new GenerateMaximizeProfitBookingRequestQuery(
                     $request->getContent()
                 )
             );
             $this->responder->loadBestCombination($bestCombinationResponse);
-
+            return $this->responder->response();
         } catch (Exception $exception) {
             $this->responder->loadError($exception->getMessage());
+            return $this->responder->response();
         }
-        return $this->responder->response();
     }
 }

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace App\Back\BookingRequest\Console\Maximize;
+namespace App\Back\BookingRequest\UI\CLI;
 
-use App\Back\BookingRequest\Application\Maximize\GenerateMaxCombinationProfit\GenerateMaximizeProfitBookingRequestQuery;
-use App\Back\BookingRequest\Domain\MaximizeResponse;
-use App\Back\BookingRequest\Infrastructure\Http\GenerateMaxProfitCombinationResponder;
+use App\Back\BookingRequest\Application\Stats\Generate\GenerateBookingRequestStatsQuery;
+use App\Back\BookingRequest\Application\Stats\StatsResponse;
+use App\Back\BookingRequest\Infrastructure\Http\GenerateStatsResponder;
 use App\Back\Shared\Domain\Bus\Query\QueryBus;
 use Exception;
 use Symfony\Component\Console\Command\Command;
@@ -14,11 +14,11 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-final class GenerateMaxProfitCombinationCommand extends Command
+final class GenerateStatsCommand extends Command
 {
     public function __construct(
         private readonly QueryBus $queryBus,
-        private readonly GenerateMaxProfitCombinationResponder $responder
+        private readonly GenerateStatsResponder $responder
     )
     {
         parent::__construct();
@@ -27,8 +27,10 @@ final class GenerateMaxProfitCombinationCommand extends Command
     protected function configure()
     {
         parent::configure();
-        $this->setDescription('Given a list of booking requests, return the best combination of requests that maximizes total profits.')
-            ->setName('stayforlong:generate:max_profit')
+        $this->setDescription('
+Given a list of booking requests, return the average, minimum, and maximum profit per night taking into account all the 
+booking requests in the payload.')
+            ->setName('booking:generate:stats')
             ->addArgument(
                 'request',
                 InputArgument::OPTIONAL,
@@ -39,14 +41,13 @@ final class GenerateMaxProfitCombinationCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         try {
-            /** @var MaximizeResponse $bestCombinationResponse */
-            $bestCombinationResponse = $this->queryBus->ask(
-                new GenerateMaximizeProfitBookingRequestQuery(
+            /** @var StatsResponse $stats */
+            $stats = $this->queryBus->ask(
+                new GenerateBookingRequestStatsQuery(
                     $input->getArgument('request')
                 )
             );
-            $this->responder->loadBestCombination($bestCombinationResponse);
-
+            $this->responder->loadStats($stats);
         } catch (Exception $exception) {
             $this->responder->loadError($exception->getMessage());
             return 0;

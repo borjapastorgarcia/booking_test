@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 
-namespace App\Tests\Behat\Stats;
+namespace App\Tests\Acceptance;
 
 
 use Behat\Behat\Context\Context;
@@ -12,7 +12,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use Psr\Http\Message\ResponseInterface;
 
-final class StatsContext implements Context
+final class ApiContext implements Context
 {
     private Client $httpClient;
     private ResponseInterface $response;

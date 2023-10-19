@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Back\BookingRequest\Domain;
 
+use App\Back\BookingRequest\Application\ValidationErrorResponse;
 use Doctrine\Common\Collections\ArrayCollection;
+use JsonException;
 
 final class BookingRequestList
 {
@@ -20,6 +22,10 @@ final class BookingRequestList
         return new ArrayCollection($this->bookingRequest);
     }
 
+    /**
+     * @throws ValidationErrorResponse
+     * @throws JsonException
+     */
     public static function fromJson(string $bookingRequestsJson): BookingRequestList
     {
         $bookingRequestsArray = json_decode($bookingRequestsJson, true, 512, JSON_THROW_ON_ERROR);
@@ -27,11 +33,11 @@ final class BookingRequestList
         foreach ($bookingRequestsArray as $bookingRequestArray) {
             BookingRequest::checkBookingRequestFieldsConsistency($bookingRequestArray);
             $bookingRequests[] = BookingRequest::create(
-                $bookingRequestArray[BookingRequestContract::REQUEST_ID],
-                $bookingRequestArray[BookingRequestContract::CHECK_IN],
-                $bookingRequestArray[BookingRequestContract::NIGHTS],
-                $bookingRequestArray[BookingRequestContract::SELLING_RATE],
-                $bookingRequestArray[BookingRequestContract::MARGIN],
+                $bookingRequestArray[BookingRequestContract::request_id()],
+                $bookingRequestArray[BookingRequestContract::check_in()],
+                $bookingRequestArray[BookingRequestContract::nights()],
+                $bookingRequestArray[BookingRequestContract::selling_rate()],
+                $bookingRequestArray[BookingRequestContract::margin()],
             );
         }
         return new self($bookingRequests);

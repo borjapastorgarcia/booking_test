@@ -2,8 +2,10 @@
 
 declare(strict_types=1);
 
-namespace App\Back\BookingRequest\Domain;
+namespace App\Back\BookingRequest\Application\Stats;
 
+use App\Back\BookingRequest\Domain\BookingRequestList;
+use App\Back\BookingRequest\Domain\StatsResponseContract;
 use App\Back\Shared\Domain\Bus\Query\Response;
 
 final class StatsResponse implements Response
@@ -29,7 +31,7 @@ final class StatsResponse implements Response
         );
     }
 
-    public static function generateStats(BookingRequestList $bookingRequestList): self
+    public static function generate(BookingRequestList $bookingRequestList): self
     {
         $profitsPerNight = $bookingRequestList->getUnitBookValues();
 
@@ -40,13 +42,12 @@ final class StatsResponse implements Response
         );
     }
 
-
-    public function toArray()
+    public function toArray(): array
     {
         return [
-            StatsResponseContract::AVG_NIGHT => $this->avgNight(),
-            StatsResponseContract::MIN_NIGHT => $this->minNight(),
-            StatsResponseContract::MAX_NIGHT => $this->maxNight()
+            StatsResponseContract::avg_night() => $this->avgNight(),
+            StatsResponseContract::min_night() => $this->minNight(),
+            StatsResponseContract::max_night() => $this->maxNight()
         ];
     }
 

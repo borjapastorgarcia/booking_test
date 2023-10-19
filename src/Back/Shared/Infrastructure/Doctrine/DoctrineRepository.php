@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 
-namespace App\Back\Shared\infrastructure\Doctrine;
+namespace App\Back\Shared\Infrastructure\Doctrine;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;

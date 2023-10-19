@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Back\BookingRequest\Infrastructure\Http;
 
-use App\Back\BookingRequest\Domain\MaximizeResponse;
-use App\Back\BookingRequest\Domain\MaximizeResponseContract;
-use App\Back\BookingRequest\Domain\StatsResponseContract;
+use App\Back\BookingRequest\Application\Maximize\MaximizeProfitResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -22,16 +20,10 @@ final class GenerateMaxProfitCombinationResponder
         $this->errors[] = $error;
     }
 
-    public function loadBestCombination(MaximizeResponse $bestProfitCombination): void
+    public function loadBestCombination(MaximizeProfitResponse $greatestProfitCombination): void
     {
         $this->response = new JsonResponse(
-            [
-                MaximizeResponseContract::REQUEST_IDS   => $bestProfitCombination->requestIds(),
-                MaximizeResponseContract::TOTAL_PROFIT  => $bestProfitCombination->totalProfit(),
-                StatsResponseContract::AVG_NIGHT        => $bestProfitCombination->avgNight(),
-                StatsResponseContract::MIN_NIGHT        => $bestProfitCombination->minNight(),
-                StatsResponseContract::MAX_NIGHT        => $bestProfitCombination->maxNight()
-            ],
+            $greatestProfitCombination->toArray(),
             Response::HTTP_OK,
         );
     }

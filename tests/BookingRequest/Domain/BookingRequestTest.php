@@ -24,11 +24,11 @@ final class BookingRequestTest extends TestCase
         $nightsValue = 3;
         $sellingRateValue = 500;
         $marginValue = 50;
-        $bookingRequestId = new BookingRequestId($idValue);
-        $checkIn = new BookingRequestCheckIn($checkInValue);
-        $nights = new BookingRequestNumberOfNights($nightsValue);
-        $sellingRate = new BookingRequestSellingRate($sellingRateValue);
-        $margin = new BookingRequestMargin($marginValue);
+        $bookingRequestId   = new BookingRequestId($idValue);
+        $checkIn            = new BookingRequestCheckIn($checkInValue);
+        $nights             = new BookingRequestNumberOfNights($nightsValue);
+        $sellingRate        = new BookingRequestSellingRate($sellingRateValue);
+        $margin             = new BookingRequestMargin($marginValue);
 
         $bookingRequest = BookingRequest::create(
             $idValue,

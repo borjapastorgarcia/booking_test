@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 
-namespace App\Back\Shared\infrastructure\Bus;
+namespace App\Back\Shared\Infrastructure\Bus;
 
 
 use ReflectionClass;

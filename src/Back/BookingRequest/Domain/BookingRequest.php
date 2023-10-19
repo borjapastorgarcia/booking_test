@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Back\BookingRequest\Domain;
 
+use App\Back\BookingRequest\Application\ValidationErrorResponse;
 use App\Back\BookingRequest\Domain\ValueObjects\BookingRequestCheckIn;
 use App\Back\BookingRequest\Domain\ValueObjects\BookingRequestId;
 use App\Back\BookingRequest\Domain\ValueObjects\BookingRequestMargin;
 use App\Back\BookingRequest\Domain\ValueObjects\BookingRequestNumberOfNights;
 use App\Back\BookingRequest\Domain\ValueObjects\BookingRequestSellingRate;
-use JetBrains\PhpStorm\ArrayShape;
 
 final class BookingRequest
 {
@@ -40,6 +40,17 @@ final class BookingRequest
         );
     }
 
+    public function toArray(): array
+    {
+        return [
+            BookingRequestContract::request_id() => $this->id(),
+            BookingRequestContract::check_in() => $this->checkIn(),
+            BookingRequestContract::nights() => $this->nights(),
+            BookingRequestContract::selling_rate() => $this->sellingRate(),
+            BookingRequestContract::margin() => $this->margin(),
+        ];
+    }
+
     /**
      * @throws ValidationErrorResponse
      */
@@ -47,7 +58,7 @@ final class BookingRequest
     {
         $missingFields = [];
         $bookingRequestArrayKeys = array_keys($bookingRequest);
-        foreach (BookingRequestContract::REQUIRED_JSON_FIELDS as $requiredField) {
+        foreach (BookingRequestContract::required_json_fields() as $requiredField) {
             if (!in_array($requiredField, $bookingRequestArrayKeys, true)) {
                 $missingFields[] = $requiredField;
             }
@@ -57,26 +68,18 @@ final class BookingRequest
         }
     }
 
-
-    #[ArrayShape([BookingRequestContract::REQUEST_ID => "string", BookingRequestContract::CHECK_IN => "string", BookingRequestContract::NIGHTS => "int", BookingRequestContract::SELLING_RATE => "int", BookingRequestContract::MARGIN => "int"])]
-    public function toArray(): array
+    public static function hasDifferentIds(mixed $firstBooking, mixed $secondBooking): bool
     {
-        return [
-            BookingRequestContract::REQUEST_ID => $this->id(),
-            BookingRequestContract::CHECK_IN => $this->checkIn(),
-            BookingRequestContract::NIGHTS => $this->nights(),
-            BookingRequestContract::SELLING_RATE => $this->sellingRate(),
-            BookingRequestContract::MARGIN => $this->margin(),
-        ];
+        return $firstBooking[BookingRequestContract::request_id()] !== $secondBooking[BookingRequestContract::request_id()];
     }
 
     public static function hasConflictiveDates(array $booking, array $bookingToCompare): bool
     {
-        $checkIn = strtotime($booking[BookingRequestContract::CHECK_IN]);
-        $checkOut = strtotime("+" . $booking[BookingRequestContract::NIGHTS] . " days", $checkIn);
+        $checkIn = strtotime($booking[BookingRequestContract::check_in()]);
+        $checkOut = strtotime("+" . $booking[BookingRequestContract::nights()] . " days", $checkIn);
 
-        $checkInToCompare = strtotime($bookingToCompare[BookingRequestContract::CHECK_IN]);
-        $checkOutToCompare = strtotime("+" . $bookingToCompare[BookingRequestContract::NIGHTS] . " days", $checkInToCompare);
+        $checkInToCompare = strtotime($bookingToCompare[BookingRequestContract::check_in()]);
+        $checkOutToCompare = strtotime("+" . $bookingToCompare[BookingRequestContract::nights()] . " days", $checkInToCompare);
 
         return ($checkIn < $checkOutToCompare && $checkOut > $checkInToCompare);
     }

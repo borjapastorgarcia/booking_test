@@ -41,4 +41,4 @@ test-acceptance:
 	./vendor/bin/behat
 
 test-behat:
-	vendor/bin/behat -p backend
+	vendor/bin/behat
